@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game 21</title>
+
+    <link rel="stylesheet" href="css\bootstrap\bootstrap.min.css">
+    <link rel="shortcut icon" href="assets\favicon.png" type="image/png">
+    <link rel="stylesheet" href="css\style.css">
+</head>
+
+<body>
+    <div> </div>
+    <div class="container text-center" id="app">
+        <h1 class="title">Jogo do 21 Com Vue JS</h1>
+        <div class="row">
+            <div :class="['col-6', playerActive == 1 ? 'active' : '']">
+                <img src=" assets\player1.png " alt="Jogador 1 ">
+                <p>
+                    Player 1
+                    <span class="badge badge-default"> {{numberHistoric1}} </span>
+                </p>
+                <p><strong>Pontos: </strong> {{ player1.pontos }}</p>
+            </div>
+            <div :class=" [ 'col-6', playerActive==2 ? 'active' : ''] ">
+                <img src="assets\player2.png " alt="Jogador 1 ">
+                <p>
+                    Player 2
+                    <span class="badge badge-default"> {{numberHistoric2}} </span>
+                </p>
+                <p><strong>Pontos: </strong> {{ player2.pontos }}</p>
+            </div>
+        </div>
+
+        <div class="controls col ">
+            <button class="btn btn-success " @click.prevent="alternaPlayer " ype="button ">Pular</button>
+            <button class="btn btn-info " @click.prevent="endGame " type="button ">Finalizar Jogo</button>
+            <button class="btn btn-danger " @click.prevent="resetGame " type="button ">Resetar o Jogo</button>
+
+        </div>
+
+        <hr>
+        <div class="row ">
+            <div class="col-6 ">
+                <a href="# " @click.prevent="selectCart ">
+                    <img src="assets\baralho-cartas.png " alt="baralho " class="carts ">
+                </a>
+            </div>
+            <div class="col-6 ">
+                <div v-if=" cartSeleted !=' ' ">
+                    <img :src=" 'assets/carts/'+cartSeleted+ '.png' " alt=" carta " class="cart ">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src=".\vue.js "></script>
+    <script>
+        new Vue({
+            el: ' #app ',
+            data: {
+                playerActive: 1,
+                player1: {
+                    pontos: 0,
+                    historic: [],
+                },
+                player2: {
+                    pontos: 0,
+                    historic: [],
+                },
+                cartSeleted: ' '
+            },
+            methods: {
+                alternaPlayer() {
+                    this.playerActive = this.playerActive == 1 ? 2 : 1
+                    this.cartSeleted = ' '
+                },
+                selectCart() {
+                    this.cartSeleted = Math.floor((Math.random() * 13) + 1)
+                    if (this.playerActive == 1) {
+                        this.player1.pontos += this.cartSeleted
+
+                        this.player1.historic.push(this.cartSeleted)
+                    }
+                    if (this.playerActive == 2) {
+                        this.player2.pontos += this.cartSeleted
+
+                        this.player2.historic.push(this.cartSeleted)
+                    }
+                    if (this.player1.pontos >= 21 || this.player2.pontos >= 21)
+                        this.endGame()
+                },
+                endGame() {
+                    if (this.player1.pontos <= 21 && this.player1.pontos > this.player2.pontos) {
+                        alert('O JOGADOR 1 VENCEU ESSSA PARTIDA')
+                    } else if (this.player2.pontos <= 21 && this.player2.pontos > this.player1.pontos) {
+                        alert('O JOGADOR 2 VENCEU ESSSA PARTIDA')
+                    } else if (this.player1.pontos > 21) {
+                        alert('O JOGADOR 2 VENCEU ESSSA PARTIDA')
+                    } else if (this.player2.pontos > 21) {
+                        alert('O JOGADOR 1 VENCEU ESSSA PARTIDA')
+                    } else {
+                        alert('EMPATE')
+                    }
+
+                    let vm = this
+                    setTimeout(function() {
+                        vm.resetGame()
+                    }, 3000)
+
+                },
+                resetGame() {
+                    this.player1.pontos = 0,
+                        this.player2.pontos = 0,
+                        this.cartSeleted = ' ',
+                        this.playerActive = 1
+                    this.player1.historic = [],
+                        this.player2.historic = []
+                }
+            },
+            computed: {
+                numberHistoric1() {
+                    return this.player1.historic.length
+                },
+                numberHistoric2() {
+                    return this.player2.historic.length
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
